@@ -1,5 +1,5 @@
 -- Creación de la base de datos
-create database sistema_reservas_hotel
+create database sistema_reservas_hotel;
 
 -- Creación de tablas con sus respectivas restricciones
 
