@@ -106,4 +106,3 @@ insert into detalle_factura (descripcion, cantidad, valor_unitario, id_factura) 
 ('servicio de transporte', 1, 25.00, 4),
 ('consumo restaurante', 2, 15.00, 4);
 
-select * from detalle_factura;
