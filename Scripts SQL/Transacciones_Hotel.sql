@@ -121,5 +121,3 @@ SET estado_habitacion = 'disponible'
 WHERE id_habitacion = 2;
 
 COMMIT;
-
-ROLLBACK;
