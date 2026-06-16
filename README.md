@@ -17,11 +17,11 @@ PROYECTO-BD-GRUPO-S
 ├── Scripts SQL
 │   ├── DDL-Hotel.sql
 │   ├── DML-Hotel.sql
-│   ├── Consultas-Hotel.sql
-│   ├── Transacciones-Hotel.sql
+│   ├── Consultas_Hotel.sql
+│   ├── Transacciones_Hotel.sql
 │   ├── Funciones_Hotel.sql
 │   ├── Procedimientos_Hotel.sql
-│   └── Triggers-Hotel.sql
+│   └── Triggers_Hotel.sql
 │
 ├── Documentación
 │   ├── ER HOTEL GRUPO S.png
@@ -110,5 +110,3 @@ Disparadores para:
 
 ---
 
-
-Este repositorio contiene todos los scripts SQL y la documentación necesaria para la implementación y evaluación del proyecto final de la asignatura Bases de Datos.
