@@ -19,8 +19,8 @@ PROYECTO-BD-GRUPO-S
 │   ├── DML-Hotel.sql
 │   ├── Consultas-Hotel.sql
 │   ├── Transacciones-Hotel.sql
-│   ├── Funciones-Hotel.sql
-│   ├── Procedimientos-Hotel.sql
+│   ├── Funciones_Hotel.sql
+│   ├── Procedimientos_Hotel.sql
 │   └── Triggers-Hotel.sql
 │
 ├── Documentación

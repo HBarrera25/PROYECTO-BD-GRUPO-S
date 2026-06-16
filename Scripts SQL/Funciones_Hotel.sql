@@ -1,5 +1,10 @@
 -- ============================================================
 -- FUNCION 1: TOTAL DE SERVICIOS CONSUMIDOS POR RESERVACION
+-- Calcula el monto total de los servicios adicionales
+-- consumidos durante una reservación específica.
+-- Retorna:
+-- Un valor numérico correspondiente a la suma de los
+-- subtotales registrados en consumo_servicio.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_total_servicios_reservacion(
@@ -20,9 +25,17 @@ BEGIN
 END;
 $$;
 
+-- prueba funcion 1
+SELECT fn_total_servicios_reservacion(1);
+
 
 -- ============================================================
 -- FUNCION 2: TOTAL DE HOSPEDAJE DE UNA RESERVACION
+-- Calcula el costo del hospedaje de una reservación
+-- multiplicando la cantidad de noches por el precio
+-- de la habitación reservada.
+-- Retorna:
+-- El costo total del hospedaje.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_total_hospedaje_reservacion(
@@ -47,9 +60,15 @@ BEGIN
 END;
 $$;
 
+-- prueba funcion 2
+SELECT fn_total_hospedaje_reservacion(1);
 
 -- ============================================================
 -- FUNCION 3: TOTAL GENERAL DE UNA RESERVACION
+-- Obtiene el costo total de una reservación sumando
+-- el costo del hospedaje y los servicios consumidos.
+-- Retorna:
+-- El monto total a pagar por la reservación.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_total_reservacion(
@@ -64,9 +83,16 @@ BEGIN
 END;
 $$;
 
+-- prueba funcion 3
+SELECT fn_total_reservacion(1);
 
 -- ============================================================
 -- FUNCION 4: HABITACIONES POR ESTADO
+-- Consulta las habitaciones filtradas según el estado
+-- indicado por el usuario.
+-- Retorna:
+-- Un conjunto de registros con la información de las
+-- habitaciones que coinciden con el estado solicitado.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_habitaciones_por_estado(
@@ -98,9 +124,17 @@ BEGIN
 END;
 $$;
 
+-- prueba funcion 4
+SELECT *
+FROM fn_habitaciones_por_estado('disponible');
+
 
 -- ============================================================
 -- FUNCION 5: FACTURACION POR HUESPED
+-- Genera un reporte de facturación agrupado por huésped.
+-- Retorna:
+-- La cantidad de facturas y el monto total facturado
+-- para cada huésped registrado en el sistema.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION fn_facturacion_por_huesped()
@@ -129,3 +163,7 @@ BEGIN
     ORDER BY total_facturado DESC;
 END;
 $$;
+
+-- prueba funcion 5
+SELECT *
+FROM fn_facturacion_por_huesped();
