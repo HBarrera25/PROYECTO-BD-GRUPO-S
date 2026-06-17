@@ -99,3 +99,51 @@ inner join detalle_factura df
 on f.id_factura = df.id_factura
 order by f.id_factura,
 df.id_detalle_factura;
+
+--Consulta 8: cantidad de reservaciones por estado
+select estado_reserva,
+count(*) as total_reservaciones
+from reservacion
+group by estado_reserva
+order by total_reservaciones desc;
+
+--Consulta 9: servicios mas consumidos
+select s.nombre_servicio,
+sum(cs.cantidad) as cantidad_consumida,
+sum(cs.subtotal) as total_generado
+from servicio s
+inner join consumo_servicio cs
+on s.id_servicio = cs.id_servicio
+group by s.nombre_servicio
+order by cantidad_consumida desc;
+
+--Consulta 10: ingresos totales por mes
+select extract(month from fecha_emision) as mes,
+sum(total_factura) as ingresos_totales
+from factura
+group by extract(month from fecha_emision)
+order by mes;
+
+--Consulta 11: promedio de gasto por huesped
+select h.id_huesped,
+h.nombre_huesped,
+h.apellido_huesped,
+round(avg(f.total_factura),2) as promedio_gastado
+from huesped h
+inner join reservacion r
+on h.id_huesped = r.id_huesped
+inner join factura f
+on r.id_reservacion = f.id_reservacion
+group by h.id_huesped,
+h.nombre_huesped,
+h.apellido_huesped
+order by promedio_gastado desc;
+
+--Consulta 12: duracion de cada reservacion en dias
+select id_reservacion,
+fecha_entrada,
+fecha_salida,
+fecha_salida - fecha_entrada as dias_estadia,
+estado_reserva
+from reservacion
+order by dias_estadia desc;
