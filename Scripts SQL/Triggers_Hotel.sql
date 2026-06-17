@@ -71,6 +71,30 @@ ON reservacion
 FOR EACH ROW
 EXECUTE FUNCTION fn_reservacion_before_ops();
 
+-- PRUEBA TRIGGER 1
+-- VALIDAR TRASLAPE DE RESERVACIONES
+-- DEBE GENERAR ERROR SI LA HABITACIÓN YA ESTÁ RESERVADA EN ESE PERÍODO
+
+INSERT INTO reservacion (
+    fecha_entrada,
+    fecha_salida,
+    fecha_reserva,
+    estado_reserva,
+    id_habitacion,
+    id_huesped,
+    id_empleado
+)
+VALUES (
+    '2026-07-02',
+    '2026-07-03',
+    NOW(),
+    'confirmada',
+    1,
+    2,
+    1
+);
+
+
 -- TRIGGER 2: TRIGGER DE CONTROL DE ESTADO DE HABITACIÓN Y AUDITORÍA
 -- Sincroniza el estado real de la habitación si la reserva es para hoy
 -- y respalda la evidencia completa de cambios en las reservas.
@@ -127,6 +151,29 @@ ON reservacion
 FOR EACH ROW
 EXECUTE FUNCTION fn_reservacion_after_ops();
 
+-- PRUEBA TRIGGER 2
+-- AUDITORÍA DE RESERVACIÓN Y ACTUALIZACIÓN DE ESTADO DE HABITACIÓN
+
+UPDATE reservacion
+SET estado_reserva = 'cancelada'
+WHERE id_reservacion = 3;
+
+SELECT *
+FROM auditoria_reservacion
+WHERE id_reservacion = 3
+ORDER BY fecha_cambio DESC;
+
+SELECT id_habitacion,
+       numero_habitacion,
+       estado_habitacion
+FROM habitacion
+WHERE id_habitacion = (
+    SELECT id_habitacion
+    FROM reservacion
+    WHERE id_reservacion = 3
+);
+
+
 -- TRIGGER 3: TRIGGER DE VALIDACIÓN DE PRECIO DE HABITACIÓN 
 -- Asegura que ningún tipo de habitación se registre con tarifas inválidas o incorrectas.
 -- valida antes de persistir el precio, aborta si no cumple la regla de negocio
@@ -149,6 +196,15 @@ BEFORE INSERT OR UPDATE OF precio_noche
 ON tipo_habitacion
 FOR EACH ROW
 EXECUTE FUNCTION fn_validar_precio_tipo_habitacion();
+
+-- PRUEBA TRIGGER 3
+-- VALIDACIÓN DEL PRECIO DE UNA HABITACIÓN
+-- DEBE GENERAR ERROR POR PRECIO INVÁLIDO
+
+UPDATE tipo_habitacion
+SET precio_noche = -25.00
+WHERE id_tipo_habitacion = 1;
+
 
 -- TRIGGER 4: TRIGGER DE AUDITORÍA DE PRECIOS
 -- Registra cada cambio de precio_noche en tipo_habitacion.
@@ -174,6 +230,19 @@ ON tipo_habitacion
 FOR EACH ROW
 EXECUTE FUNCTION fn_auditar_cambio_precio_habitacion();
 
+-- PRUEBA TRIGGER 4
+-- AUDITORÍA DE CAMBIO DE PRECIO DE HABITACIÓN
+
+UPDATE tipo_habitacion
+SET precio_noche = 55.00
+WHERE id_tipo_habitacion = 1;
+
+SELECT *
+FROM auditoria_precio_tipo_habitacion
+WHERE id_tipo_habitacion = 1
+ORDER BY fecha_cambio DESC;
+
+
 -- TRIGGER 5: TRIGGER PARA EVITAR BORRADO
 -- Bloquea DELETE sobre servicios esenciales del hotel.
 -- intercepta antes de que se borre nada de la tabla servicio
@@ -196,6 +265,13 @@ CREATE TRIGGER trg_evitar_borrado_servicio_esencial
 BEFORE DELETE ON servicio
 FOR EACH ROW
 EXECUTE FUNCTION fn_evitar_borrado_servicio_esencial();
+
+-- PRUEBA TRIGGER 5
+-- EVITAR ELIMINACIÓN DE SERVICIOS ESENCIALES
+-- DEBE GENERAR ERROR AL INTENTAR ELIMINAR EL SERVICIO
+
+DELETE FROM servicio
+WHERE nombre_servicio = 'restaurante';
 
 -- TRIGGER 6: TRIGGER DE ACTUALIZACIÓN AUTOMÁTICA DE FACTURACIÓN
 -- Recalcula de forma dinámica el total de la factura usando la función global del equipo cuando se altera un consumo de servicio.
@@ -232,3 +308,39 @@ CREATE TRIGGER trg_actualizar_total_factura_consumo
 AFTER INSERT OR UPDATE OR DELETE ON consumo_servicio
 FOR EACH ROW
 EXECUTE FUNCTION fn_actualizar_total_factura_servicio();
+
+-- PRUEBA TRIGGER 6
+-- ACTUALIZACIÓN AUTOMÁTICA DEL TOTAL DE FACTURA
+
+UPDATE factura
+SET estado_pago = 'pendiente'
+WHERE id_reservacion = 1;
+
+SELECT id_factura,
+       id_reservacion,
+       total_factura,
+       estado_pago
+FROM factura
+WHERE id_reservacion = 1;
+
+INSERT INTO consumo_servicio (
+    cantidad,
+    precio_unitario,
+    fecha_consumo,
+    id_servicio,
+    id_reservacion
+)
+VALUES (
+    1,
+    12.00,
+    NOW(),
+    5,
+    1
+);
+
+SELECT id_factura,
+       id_reservacion,
+       total_factura,
+       estado_pago
+FROM factura
+WHERE id_reservacion = 1;

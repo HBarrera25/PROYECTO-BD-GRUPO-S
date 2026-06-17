@@ -1,6 +1,6 @@
 --Consultas:
 
---Consulta 1: mostrar las habitacione registradas:
+--Consulta 1: mostrar las habitaciones registradas:
 select id_habitacion,
 numero_habitacion,
 piso,
@@ -51,7 +51,7 @@ left join reservacion r
 on ha.id_habitacion  = r.id_habitacion 
 where r.id_reservacion is null order by ha.numero_habitacion;
 
---Consulta 5: huespedes que han gastadio mas de 300 dolares en el hotel
+--Consulta 5: huespedes que han gastado mas de 300 dolares en el hotel
 select h.id_huesped,
 h.nombre_huesped,
 h.apellido_huesped,
