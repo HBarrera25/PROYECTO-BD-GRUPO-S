@@ -147,3 +147,33 @@ fecha_salida - fecha_entrada as dias_estadia,
 estado_reserva
 from reservacion
 order by dias_estadia desc;
+
+call sp_registrar_reservacion(
+    '2026-08-10',
+    '2026-08-13',
+    5,
+    4,
+    1,
+    null,
+    null
+);
+
+call sp_registrar_check_in(
+    4,
+    'huésped ingresó sin inconvenientes',
+    null
+);
+
+call sp_realizar_check_out(
+    3,
+    'efectivo',
+    4,
+    null,
+    null,
+    null
+);
+
+call sp_cancelar_reservacion(
+    8,
+    null
+);
