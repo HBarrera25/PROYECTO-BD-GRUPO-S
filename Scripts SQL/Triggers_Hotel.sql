@@ -65,7 +65,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_reservacion_before
+CREATE OR REPLACE TRIGGER trg_reservacion_before
 BEFORE INSERT OR UPDATE OF fecha_entrada, fecha_salida, id_habitacion, estado_reserva
 ON reservacion
 FOR EACH ROW
@@ -145,7 +145,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_reservacion_after
+CREATE OR REPLACE TRIGGER trg_reservacion_after
 AFTER INSERT OR UPDATE OR DELETE
 ON reservacion
 FOR EACH ROW
@@ -163,15 +163,14 @@ FROM auditoria_reservacion
 WHERE id_reservacion = 3
 ORDER BY fecha_cambio DESC;
 
-SELECT id_habitacion,
-       numero_habitacion,
-       estado_habitacion
-FROM habitacion
-WHERE id_habitacion = (
-    SELECT id_habitacion
-    FROM reservacion
-    WHERE id_reservacion = 3
-);
+SELECT 
+    r.id_reservacion,         
+    h.id_habitacion,          
+    h.numero_habitacion,      
+    h.estado_habitacion       
+FROM habitacion h
+INNER JOIN reservacion r ON h.id_habitacion = r.id_habitacion
+WHERE r.id_reservacion = 3;
 
 
 -- TRIGGER 3: TRIGGER DE VALIDACIÓN DE PRECIO DE HABITACIÓN 
@@ -191,7 +190,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_validar_precio_tipo_habitacion
+CREATE OR REPLACE TRIGGER trg_validar_precio_tipo_habitacion
 BEFORE INSERT OR UPDATE OF precio_noche
 ON tipo_habitacion
 FOR EACH ROW
@@ -224,7 +223,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_auditar_cambio_precio_habitacion
+CREATE OR REPLACE TRIGGER trg_auditar_cambio_precio_habitacion
 AFTER UPDATE OF precio_noche
 ON tipo_habitacion
 FOR EACH ROW
@@ -261,7 +260,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_evitar_borrado_servicio_esencial
+CREATE OR REPLACE TRIGGER trg_evitar_borrado_servicio_esencial
 BEFORE DELETE ON servicio
 FOR EACH ROW
 EXECUTE FUNCTION fn_evitar_borrado_servicio_esencial();
@@ -304,7 +303,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_actualizar_total_factura_consumo
+CREATE OR REPLACE TRIGGER trg_actualizar_total_factura_consumo
 AFTER INSERT OR UPDATE OR DELETE ON consumo_servicio
 FOR EACH ROW
 EXECUTE FUNCTION fn_actualizar_total_factura_servicio();
