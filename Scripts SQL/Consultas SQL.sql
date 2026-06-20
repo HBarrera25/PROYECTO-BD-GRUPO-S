@@ -10,11 +10,9 @@ from habitacion order by numero_habitacion;
 
 --Consulta 2: reservacion, huesped, habitacion y empleado que realiza la reservacion
 select r.id_reservacion,
-h.nombre_huesped,
-h.apellido_huesped,
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 ha.numero_habitacion,
-e.nombre_empleado,
-e.apellido_empleado,
+initcap(concat(e.nombre_empleado, ' ', e.apellido_empleado)) as nombre_completo_empleado,
 r.fecha_entrada,
 r.fecha_salida,
 r.estado_reserva
@@ -29,15 +27,13 @@ order by r.id_reservacion;
 
 --Consulta 3: huesped con mas de una reservacion
 select h.id_huesped,
-h.nombre_huesped,
-h.apellido_huesped, 
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 count(r.id_reservacion) as total_reservaciones
 from huesped h
 inner join reservacion r
 on h.id_huesped = r.id_huesped
 group by h.id_huesped, 
-h.nombre_huesped, 
-h.apellido_huesped
+nombre_completo_huesped 
 having count(r.id_reservacion) > 1
 order by total_reservaciones desc;
 
@@ -53,8 +49,7 @@ where r.id_reservacion is null order by ha.numero_habitacion;
 
 --Consulta 5: huespedes que han gastado mas de 300 dolares en el hotel
 select h.id_huesped,
-h.nombre_huesped,
-h.apellido_huesped,
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 sum(f.total_factura) as total_gastado
 from huesped h
 inner join reservacion r
@@ -62,15 +57,13 @@ on h.id_huesped = r.id_huesped
 inner join factura f
 on r.id_reservacion = f.id_reservacion 
 group by h.id_huesped,
-h.nombre_huesped,
-h.apellido_huesped 
+nombre_completo_huesped  
 having sum(f.total_factura)>300
 order by total_gastado desc;
 
 --Consulta 6: facturas que se pasan del promedio general
 select r.id_reservacion,
-h.nombre_huesped,
-h.apellido_huesped,
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 f.total_factura
 from reservacion r
 inner join huesped h
@@ -82,8 +75,7 @@ order by f.total_factura desc;
 
 --Consulta 7: detalle de factura
 select f.id_factura,
-h.nombre_huesped,
-h.apellido_huesped,
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 df.descripcion,
 df.cantidad,
 df.valor_unitario,
@@ -126,8 +118,7 @@ order by mes;
 
 --Consulta 11: promedio de gasto por huesped
 select h.id_huesped,
-h.nombre_huesped,
-h.apellido_huesped,
+initcap(concat(h.nombre_huesped, ' ', h.apellido_huesped)) as nombre_completo_huesped,
 round(avg(f.total_factura),2) as promedio_gastado
 from huesped h
 inner join reservacion r
@@ -135,8 +126,7 @@ on h.id_huesped = r.id_huesped
 inner join factura f
 on r.id_reservacion = f.id_reservacion
 group by h.id_huesped,
-h.nombre_huesped,
-h.apellido_huesped
+nombre_completo_huesped 
 order by promedio_gastado desc;
 
 --Consulta 12: duracion de cada reservacion en dias
@@ -148,32 +138,3 @@ estado_reserva
 from reservacion
 order by dias_estadia desc;
 
-call sp_registrar_reservacion(
-    '2026-08-10',
-    '2026-08-13',
-    5,
-    4,
-    1,
-    null,
-    null
-);
-
-call sp_registrar_check_in(
-    4,
-    'huésped ingresó sin inconvenientes',
-    null
-);
-
-call sp_realizar_check_out(
-    3,
-    'efectivo',
-    4,
-    null,
-    null,
-    null
-);
-
-call sp_cancelar_reservacion(
-    8,
-    null
-);
