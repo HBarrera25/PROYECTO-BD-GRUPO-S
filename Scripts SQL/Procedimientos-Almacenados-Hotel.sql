@@ -53,7 +53,17 @@ END;
 $$;
 
 -- prueba procedimiento 1
-CALL sp_registrar_reservacion('2026-09-01', '2026-09-04', 2, 1, 1, NULL);
+
+DO $$
+DECLARE
+    v_id_creado BIGINT;
+BEGIN
+    -- Llamamos al procedimiento pasando una variable para el OUT
+    CALL sp_registrar_reservacion('2026-09-01', '2026-09-04', 2, 1, 1, v_id_creado);
+    
+    -- Mostramos el ID en la pestaña de mensajes/output
+    RAISE NOTICE 'Reservación creada con éxito. ID: %', v_id_creado;
+END $$;
 
 
 
@@ -61,7 +71,7 @@ CALL sp_registrar_reservacion('2026-09-01', '2026-09-04', 2, 1, 1, NULL);
 -- Crea la estancia asociada a una reservacion confirmada.
 
 
-CREATE OR REPLACE PROCEDURE sp_registrar_checkin(
+CREATE OR REPLACE PROCEDURE sp_registrar_check_in(
     IN p_id_reservacion BIGINT,
     IN p_observaciones  TEXT DEFAULT NULL
 )
@@ -105,15 +115,17 @@ END;
 $$;
 
 -- prueba procedimiento 2
-CALL sp_registrar_checkin(3, 'Ingreso registrado por procedimiento almacenado');
+select * from reservacion;
 
+CALL sp_registrar_check_in(3, 'Ingreso registrado por procedimiento almacenado');
 
+select * from estancia;
 
 -- PROCEDIMIENTO 3: REGISTRAR CHECK-OUT
 -- Cierra la estancia y libera la habitacion (queda disponible).
 
 
-CREATE OR REPLACE PROCEDURE sp_registrar_checkout(
+CREATE OR REPLACE PROCEDURE sp_registrar_check_out(
     IN p_id_reservacion BIGINT
 )
 LANGUAGE plpgsql
@@ -144,7 +156,10 @@ END;
 $$;
 
 -- prueba procedimiento 3
-CALL sp_registrar_checkout(3);
+CALL sp_registrar_check_out(3);
+
+select * from estancia;
+
 
 -- PROCEDIMIENTO 4: REGISTRAR CONSUMO DE SERVICIO
 -- Inserta el consumo y, si ya existe factura pendiente para
@@ -198,6 +213,8 @@ $$;
 
 -- prueba procedimiento 4
 CALL sp_registrar_consumo_servicio(3, 1, 2);
+
+select * from consumo_servicio;
 
 
 -- PROCEDIMIENTO 5: GENERAR FACTURA DE UNA RESERVACION
@@ -273,7 +290,20 @@ END;
 $$;
 
 -- prueba procedimiento 5
-CALL sp_generar_factura(3, 'tarjeta credito', 1, NULL);
+
+DO $$
+DECLARE
+    v_factura_emitida BIGINT;
+BEGIN
+    -- Ejecutamos pasando la variable para guardar el ID de salida
+    CALL sp_generar_factura(3, 'tarjeta credito', 1, v_factura_emitida);
+    
+    -- Imprimimos el resultado en la pestaña de mensajes
+    RAISE NOTICE 'Factura generada exitosamente. ID Factura: %', v_factura_emitida;
+END $$;
+
+select * from factura;
+
 
 -- PROCEDIMIENTO 6: REGISTRAR PAGO DE FACTURA
 -- Marca una factura como pagada, validando que no haya
@@ -309,6 +339,8 @@ $$;
 
 -- prueba procedimiento 6
 CALL sp_registrar_pago_factura(1);
+
+select * from factura;
 
 
 -- PROCEDIMIENTO 7: CANCELAR RESERVACION
@@ -354,3 +386,5 @@ $$;
 
 -- prueba procedimiento 7
 CALL sp_cancelar_reservacion(4);
+
+select * from reservacion;
