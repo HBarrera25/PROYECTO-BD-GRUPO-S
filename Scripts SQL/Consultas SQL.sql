@@ -138,3 +138,14 @@ estado_reserva
 from reservacion
 order by dias_estadia desc;
 
+-- Consulta 13: información de huéspedes
+select
+    initcap(concat(nombre_huesped, ' ', apellido_huesped)) as nombre_completo,
+    upper(dui) as dui,
+    lower(correo_huesped) as correo,
+    coalesce(telefono_huesped, 'sin telefono') as telefono,
+    length(direccion_huesped) as longitud_direccion,
+    to_char(fecha_registro, 'DD/MM/YYYY') as fecha_registro
+from huesped
+order by nombre_huesped;
+
