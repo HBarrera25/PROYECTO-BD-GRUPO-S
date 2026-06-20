@@ -17,16 +17,16 @@ PROYECTO-BD-GRUPO-S
 ├── Scripts SQL
 │   ├── DDL-Hotel.sql
 │   ├── DML-Hotel.sql
-│   ├── Consultas_Hotel.sql
+│   ├── Consultas SQL.sql
 │   ├── Transacciones_Hotel.sql
 │   ├── Funciones_Hotel.sql
-│   ├── Procedimientos_Hotel.sql
+│   ├── Procedimientos-Almacenados-Hotel.sql
 │   └── Triggers_Hotel.sql
 │
 ├── Documentación
 │   ├── ER HOTEL GRUPO S.png
 │   ├── MR PROYECTO BD.png
-│   └── PROYECTO FINAL BD_GRUPO_S.pdf
+│   └── PROYECTO BASE DE DATOS GRUPO S.pdf
 │
 └── README.md
 ```
